@@ -1,43 +1,52 @@
-from functools import reduce
-from datetime import date, datetime
 import re
  
- 
-def func_odd(n):
+# Multiplicar por 2 los numeros en posiciones impares
+# en el arreglo. Restarle 9 si el resultado si es
+# mayor que 9
 
-    t = n * 2
-    if ( t > 9 ): # Numeros mayores o igual a 10
-        t -= 9
-        return n
+def eval_pos(n, pos):
+ 
+    if ( pos % 2 != 0 ):
+        t = n * 2
+        if ( t > 9 ): 
+            t -= 9
+        return t
     return n
 
 def validate_cedula( value ):
-
-    ok = False
-
-    m = re.search(r'^(?!000|=.*\d)(?=.*[1-9]).{11}$', value)
-    ced = m.group(0)
-
-    if m is not None:
     
-        v = int( ced[-1] ) # digito verificador enesimo
-        z = [ int(n) for n in ced[1:10] ] # numeros de la cedula del 2 al 9
+    # Regex para filtrar cedulas con el formato correcto: 11 digitos 
+    # que no empienzan con 000 ni contenga guiones
+    p = re.compile(r'^(?!000)[0-9]{11}$')
+    m = p.match( value )
+    
+    is_valid = False
+    
+    if m:
+        ced = m.group(0)
+        v = int( ced[-1] ) # Digito verificador. Ultimo digito del arreglo
+        z = [ int(n) for n in ced[:10] ] #Los primeros 10 digitos
         
-        even_pos = z[1:9:2] # numeros en posiciones pares del arreglo del 2 al 8
-        odd_pos  = z[0::2]  # numeros en posiciones impares del arreglo del 1 al 9
+        sn  = 0 # sumatoria de los n-elementos del arreglo
+        pos = 0 # Posicion en el arreglo
         
-        for n in odd_pos:
-            odd_pos = list(map(lambda x: x(n), [func_odd] ))
+        for n in z[::-1]: # Procesar arreglo descendentemente: der -> izq
+            pos += 1
+            sn  += eval_pos(n, pos)
+            
+        sn = 10 - sn % 10
         
-        sn = 10 - reduce((lambda x, y: (x + y) % 10 ), odd_pos + even_pos)       
-      
-        print ( sn )
-        
+        # Si la suma es 10 el verificador debe ser cero
+        # o el verificador y la suma deben coincidir
         if ( (sn == 10 and v == 0) or sn == v):
-            ok = True
-    return ok
-
+            is_valid = True
+            
+    return is_valid
     
 print( validate_cedula('00102470812') )
-#print( validate_cedula('00000000012') )
+print( validate_cedula('00104464664'))
+print( validate_cedula('01800475863'))
+print( validate_cedula('02601172932'))
+print( validate_cedula('00000000012') )
+print( validate_cedula('001-0247021') )
 
