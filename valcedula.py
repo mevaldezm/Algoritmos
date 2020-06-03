@@ -1,7 +1,7 @@
 import re
  
 # Multiplicar por 2 los numeros en posiciones impares
-# en el arreglo. Restarle 9 si el resultado si es
+# en el arreglo. Restarle 9 si el resultado es
 # mayor que 9
 
 def eval_pos(n, pos):
