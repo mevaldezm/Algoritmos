@@ -42,8 +42,7 @@ def validate_cedula( value ):
             is_valid = True
             
     return is_valid
-    
-print( validate_cedula('00102470812') )
+   
 print( validate_cedula('00104464664'))
 print( validate_cedula('01800475863'))
 print( validate_cedula('02601172932'))
